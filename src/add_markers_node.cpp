@@ -70,7 +70,7 @@ void PlaceMarkerAtDropOff(const ros::Publisher &marker_pub,
   position.y = 3.5;
   orientation.z = 0.7;
   orientation.w = 0.7;
-  marker.action = visualization_msgs::Marker::ADD;
+  marker = MakeMarker(position, orientation);
   marker_pub.publish(marker);
   ros::Duration(5).sleep();
 }
