@@ -40,16 +40,15 @@ int main(int argc, char **argv) {
   PlaceMarkerAtDropOff(marker_pub, position, orientation, marker);
 }
 
-void PlaceMarkerAtDropOff(const ros::Publisher &marker_pub,
-                          geometry_msgs::Point &position,
-                          geometry_msgs::Quaternion &orientation,
-                          visualization_msgs::Marker &marker) {
-  ROS_INFO("Placing marker at drop off zone");
-  position.x = -2.5;
-  position.y = 3.5;
-  orientation.z = 0.7;
-  orientation.w = 0.7;
-  marker.action = visualization_msgs::Marker::ADD;
+void PlaceMarkerAtPickup(const ros::Publisher &marker_pub,
+                         geometry_msgs::Point &position,
+                         geometry_msgs::Quaternion &orientation,
+                         visualization_msgs::Marker &marker) {
+  ROS_INFO("Placing marker at pickup zone");
+  position.x = -3.0;
+  position.y = -1.2;
+  orientation.w = 1.0;
+  marker = MakeMarker(position, orientation);
   marker_pub.publish(marker);
   ros::Duration(5).sleep();
 }
@@ -62,15 +61,16 @@ void HideMarker(const ros::Publisher &marker_pub,
   ros::Duration(5).sleep();
 }
 
-void PlaceMarkerAtPickup(const ros::Publisher &marker_pub,
-                         geometry_msgs::Point &position,
-                         geometry_msgs::Quaternion &orientation,
-                         visualization_msgs::Marker &marker) {
-  ROS_INFO("Placing marker at pickup zone");
-  marker = MakeMarker(position, orientation);
-  position.x = -3.0;
-  position.y = -1.2;
-  orientation.w = 1.0;
+void PlaceMarkerAtDropOff(const ros::Publisher &marker_pub,
+                          geometry_msgs::Point &position,
+                          geometry_msgs::Quaternion &orientation,
+                          visualization_msgs::Marker &marker) {
+  ROS_INFO("Placing marker at drop off zone");
+  position.x = -2.5;
+  position.y = 3.5;
+  orientation.z = 0.7;
+  orientation.w = 0.7;
+  marker.action = visualization_msgs::Marker::ADD;
   marker_pub.publish(marker);
   ros::Duration(5).sleep();
 }
@@ -87,9 +87,9 @@ MakeMarker(const geometry_msgs::Point &position,
   marker.action = visualization_msgs::Marker::ADD;
   marker.pose.position = position;
   marker.pose.orientation = orientation;
-  marker.scale.x = 1.0;
-  marker.scale.y = 1.0;
-  marker.scale.z = 1.0;
+  marker.scale.x = 0.2;
+  marker.scale.y = 0.2;
+  marker.scale.z = 0.2;
   marker.color.r = 0.0f;
   marker.color.g = 1.0f;
   marker.color.b = 0.0f;
