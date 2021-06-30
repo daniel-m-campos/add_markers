@@ -1,20 +1,16 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
 
-visualization_msgs::Marker
-MakeMarker(const geometry_msgs::Point &position,
-           const geometry_msgs::Quaternion &orientation);
+visualization_msgs::Marker MakeMarker(
+    const geometry_msgs::Point &position,
+    const geometry_msgs::Quaternion &orientation);
 
 void PlaceMarkerAtPickup(const ros::Publisher &marker_pub,
-                         geometry_msgs::Point &position,
-                         geometry_msgs::Quaternion &orientation,
                          visualization_msgs::Marker &marker);
 void HideMarker(const ros::Publisher &marker_pub,
                 visualization_msgs::Marker &marker);
 
 void PlaceMarkerAtDropOff(const ros::Publisher &marker_pub,
-                          geometry_msgs::Point &position,
-                          geometry_msgs::Quaternion &orientation,
                           visualization_msgs::Marker &marker);
 
 int main(int argc, char **argv) {
@@ -31,20 +27,17 @@ int main(int argc, char **argv) {
     ROS_WARN_ONCE("Please create a subscriber to the marker");
     sleep(1);
   }
-  geometry_msgs::Point position;
-  geometry_msgs::Quaternion orientation;
   visualization_msgs::Marker marker;
-
-  PlaceMarkerAtPickup(marker_pub, position, orientation, marker);
+  PlaceMarkerAtPickup(marker_pub, marker);
   HideMarker(marker_pub, marker);
-  PlaceMarkerAtDropOff(marker_pub, position, orientation, marker);
+  PlaceMarkerAtDropOff(marker_pub, marker);
 }
 
 void PlaceMarkerAtPickup(const ros::Publisher &marker_pub,
-                         geometry_msgs::Point &position,
-                         geometry_msgs::Quaternion &orientation,
                          visualization_msgs::Marker &marker) {
   ROS_INFO("Placing marker at pickup zone");
+  geometry_msgs::Point position;
+  geometry_msgs::Quaternion orientation;
   position.x = -3.0;
   position.y = -1.2;
   orientation.w = 1.0;
@@ -62,22 +55,20 @@ void HideMarker(const ros::Publisher &marker_pub,
 }
 
 void PlaceMarkerAtDropOff(const ros::Publisher &marker_pub,
-                          geometry_msgs::Point &position,
-                          geometry_msgs::Quaternion &orientation,
                           visualization_msgs::Marker &marker) {
   ROS_INFO("Placing marker at drop off zone");
-  position.x = -2.5;
-  position.y = 3.5;
-  orientation.z = 0.7;
-  orientation.w = 0.7;
-  marker = MakeMarker(position, orientation);
+  marker.pose.position.x = -2.5;
+  marker.pose.position.y = 3.5;
+  marker.pose.orientation.w = 0.7;
+  marker.pose.orientation.z = 0.7;
+  marker.action = visualization_msgs::Marker::ADD;
   marker_pub.publish(marker);
   ros::Duration(5).sleep();
 }
 
-visualization_msgs::Marker
-MakeMarker(const geometry_msgs::Point &position,
-           const geometry_msgs::Quaternion &orientation) {
+visualization_msgs::Marker MakeMarker(
+    const geometry_msgs::Point &position,
+    const geometry_msgs::Quaternion &orientation) {
   visualization_msgs::Marker marker;
   marker.header.frame_id = "/map";
   marker.header.stamp = ros::Time::now();
