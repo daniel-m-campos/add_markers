@@ -7,7 +7,7 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
                              geometry_msgs::Quaternion initial_orientation,
                              double wait_seconds,
                              unsigned int not_moving_threshold)
-    : robot_pose_sub_{node_handle.subscribe("/odom", 1,
+    : robot_pose_sub_{node_handle.subscribe("/amcl_pose", 1,
                                             &MarkerManager::OdmCallback, this)},
       marker_pub_{node_handle.advertise<visualization_msgs::Marker>(
           "visualization_marker", 1)},
@@ -26,10 +26,12 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
   DropOff();
 }
 
-const nav_msgs::Odometry& MarkerManager::GetLastMessage() { return last_odom_; }
+const geometry_msgs::PoseWithCovariance& MarkerManager::GetLastMessage() {
+  return last_odom_;
+}
 
-void MarkerManager::OdmCallback(const nav_msgs::Odometry& odom) {
-  ROS_INFO_STREAM_ONCE("Received first odom message @ " << odom.header.stamp);
+void MarkerManager::OdmCallback(const geometry_msgs::PoseWithCovariance& odom) {
+  ROS_INFO_STREAM_ONCE("Received first odom message @ " << ros::Time::now());
   if (Equal(last_odom_, odom)) {
     ++not_moving_count_;
   } else {
@@ -81,16 +83,15 @@ void MarkerManager::Update() {
     Hide();
   } else if (IsNotMoving()) {
     ROS_INFO("Marker has been dropped off");
-    marker_ = MakeMarker(last_odom_.pose.pose.position,
-                         last_odom_.pose.pose.orientation);
+    marker_ = MakeMarker(last_odom_.pose.position, last_odom_.pose.orientation);
     DropOff();
     is_picked_up_ = false;
   }
 }
 
 bool MarkerManager::InRange() const {
-  auto dx = last_odom_.pose.pose.position.x - marker_.pose.position.x;
-  auto dy = last_odom_.pose.pose.position.y - marker_.pose.position.y;
+  auto dx = last_odom_.pose.position.x - marker_.pose.position.x;
+  auto dy = last_odom_.pose.position.y - marker_.pose.position.y;
   return sqrt(pow(dx, 2) + pow(dy, 2)) < 0.1;
 }
 
@@ -98,8 +99,8 @@ bool MarkerManager::IsNotMoving() const {
   return not_moving_count_ >= not_moving_threshold_;
 }
 
-bool MarkerManager::Equal(const nav_msgs::Odometry& left,
-                          const nav_msgs::Odometry& right) {
-  return (left.pose.pose.position.x == right.pose.pose.position.x) &&
-         (left.pose.pose.position.y == right.pose.pose.position.y);
+bool MarkerManager::Equal(const geometry_msgs::PoseWithCovariance& left,
+                          const geometry_msgs::PoseWithCovariance& right) {
+  return (left.pose.position.x == right.pose.position.x) &&
+         (left.pose.position.y == right.pose.position.y);
 }

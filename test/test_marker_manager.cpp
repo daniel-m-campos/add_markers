@@ -22,14 +22,14 @@ TEST_F(MarkerManagerFixture, testConstructor) {
 TEST_F(MarkerManagerFixture, testOdomCallBackTriggered) {
   MarkerManager manager{node_handle, position, orientation, 0.1};
   ros::Publisher publisher =
-      node_handle.advertise<nav_msgs::Odometry>("/odom", 1);
-  nav_msgs::Odometry expected;
-  expected.header.stamp = ros::Time::now();
+      node_handle.advertise<geometry_msgs::PoseWithCovariance>("/amcl_pose", 1);
+  geometry_msgs::PoseWithCovariance expected;
+  expected.pose.position.x = 42.0;
   publisher.publish(expected);
   ros::Duration(0.1).sleep();
   ros::spinOnce();
   auto actual = manager.GetLastMessage();
-  ASSERT_EQ(expected.header.stamp, actual.header.stamp);
+  ASSERT_EQ(expected.pose.position.x, actual.pose.position.x);
 }
 
 TEST_F(MarkerManagerFixture, testPickedUp) {
@@ -37,11 +37,10 @@ TEST_F(MarkerManagerFixture, testPickedUp) {
   position.y = -1.2;
   MarkerManager manager{node_handle, position, orientation, 0.1};
   ros::Publisher publisher =
-      node_handle.advertise<nav_msgs::Odometry>("/odom", 1);
+      node_handle.advertise<geometry_msgs::PoseWithCovariance>("/amcl_pose", 1);
 
-  nav_msgs::Odometry msg;
-  msg.header.stamp = ros::Time::now();
-  msg.pose.pose.position = position;
+  geometry_msgs::PoseWithCovariance msg;
+  msg.pose.position = position;
   publisher.publish(msg);
   ros::Duration(0.1).sleep();
   ros::spinOnce();
@@ -55,11 +54,10 @@ TEST_F(MarkerManagerFixture, testDroppedOff) {
   MarkerManager manager{node_handle, position, orientation, 0.1,
                         not_moving_threshold};
   ros::Publisher publisher =
-      node_handle.advertise<nav_msgs::Odometry>("/odom", 1);
+      node_handle.advertise<geometry_msgs::PoseWithCovariance>("/amcl_pose", 1);
 
-  nav_msgs::Odometry msg;
-  msg.header.stamp = ros::Time::now();
-  msg.pose.pose.position = position;
+  geometry_msgs::PoseWithCovariance msg;
+  msg.pose.position = position;
   publisher.publish(msg);
   ros::Duration(0.1).sleep();
   ros::spinOnce();
@@ -68,8 +66,7 @@ TEST_F(MarkerManagerFixture, testDroppedOff) {
   position.x = -2.5;
   position.y = 3.5;
   for (int i = 0; i <= not_moving_threshold; ++i) {
-    msg.header.stamp = ros::Time::now();
-    msg.pose.pose.position = position;
+    msg.pose.position = position;
     publisher.publish(msg);
     ros::Duration(0.1).sleep();
     ros::spinOnce();
