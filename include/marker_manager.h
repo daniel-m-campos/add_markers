@@ -34,6 +34,8 @@ class MarkerManager {
   void DropOff();
   bool InRange() const;
   bool IsNotMoving() const;
+  static bool Equal(const nav_msgs::Odometry& left,
+                    const nav_msgs::Odometry& right);
 };
 
 #endif  // MARKER_MANAGER_H_

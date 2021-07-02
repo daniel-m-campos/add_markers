@@ -26,7 +26,7 @@ const nav_msgs::Odometry& MarkerManager::GetLastMessage() { return last_odom_; }
 
 void MarkerManager::OdmCallback(const nav_msgs::Odometry& odom) {
   ROS_INFO_STREAM_ONCE("Received first odom message @ " << odom.header.stamp);
-  if (last_odom_.pose == odom.pose) {
+  if (Equal(last_odom_, odom)) {
     ++not_moving_count_;
   } else {
     not_moving_count_ = 0;
@@ -92,4 +92,10 @@ bool MarkerManager::InRange() const {
 
 bool MarkerManager::IsNotMoving() const {
   return not_moving_count_ >= not_moving_threshold_;
+}
+
+bool MarkerManager::Equal(const nav_msgs::Odometry& left,
+                          const nav_msgs::Odometry& right) {
+  return (left.pose.pose.position.x == right.pose.pose.position.x) &&
+         (left.pose.pose.position.y == right.pose.pose.position.y);
 }
