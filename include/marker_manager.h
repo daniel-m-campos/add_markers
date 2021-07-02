@@ -14,6 +14,7 @@ class MarkerManager {
                 unsigned int not_moving_threshold = 10);
   const geometry_msgs::PoseWithCovarianceStamped& GetLastMessage();
   bool IsPickedUp() const;
+  bool IsDroppedOff() const;
 
  private:
   ros::Publisher marker_pub_;
@@ -23,6 +24,7 @@ class MarkerManager {
   unsigned int not_moving_count_;
   unsigned int not_moving_threshold_;
   bool is_picked_up_;
+  bool is_dropped_off_;
   double wait_seconds_;
   static constexpr double EPSILON = 0.25;
 
@@ -38,6 +40,7 @@ class MarkerManager {
   static bool Equal(const geometry_msgs::PoseWithCovarianceStamped& left,
                     const geometry_msgs::PoseWithCovarianceStamped& right);
   static double Distance(double dx, double dy);
+  bool CanPickUp() const;
 };
 
 #endif  // MARKER_MANAGER_H_

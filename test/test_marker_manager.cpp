@@ -49,7 +49,7 @@ TEST_F(MarkerManagerFixture, testPickedUp) {
   ASSERT_TRUE(manager.IsPickedUp());
 }
 
-TEST_F(MarkerManagerFixture, testDroppedOff) {
+TEST_F(MarkerManagerFixture, testDroppedOffOnce) {
   position.x = -3.0;
   position.y = -1.2;
   const auto not_moving_threshold = 2;
@@ -66,16 +66,18 @@ TEST_F(MarkerManagerFixture, testDroppedOff) {
   ros::Duration(0.1).sleep();
   ros::spinOnce();
   ASSERT_TRUE(manager.IsPickedUp());
+  ASSERT_FALSE(manager.IsDroppedOff());
 
   position.x = -2.5;
   position.y = 3.5;
-  for (int i = 0; i <= not_moving_threshold; ++i) {
+  for (int i = 0; i <= 1.5 * not_moving_threshold; ++i) {
     msg.pose.pose.position = position;
     publisher.publish(msg);
     ros::Duration(0.1).sleep();
     ros::spinOnce();
   }
   ASSERT_FALSE(manager.IsPickedUp());
+  ASSERT_TRUE(manager.IsDroppedOff());
 }
 
 int main(int argc, char** argv) {

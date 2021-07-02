@@ -16,6 +16,7 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
       not_moving_count_{0},
       not_moving_threshold_{not_moving_threshold},
       is_picked_up_{false},
+      is_dropped_off_{false},
       wait_seconds_{wait_seconds} {
   ROS_INFO_STREAM("MarkerManager constructed @ "
                   << this << ", on thread : " << std::this_thread::get_id());
@@ -82,17 +83,22 @@ void MarkerManager::Hide() {
 }
 
 void MarkerManager::Update() {
-  if (not IsPickedUp() && InRange()) {
+  if (CanPickUp()) {
     ROS_INFO_STREAM("Marker has been picked up @ " << this);
     is_picked_up_ = true;
     Hide();
   } else if (IsNotMoving()) {
     ROS_INFO("Marker has been dropped off");
+    is_picked_up_ = false;
+    is_dropped_off_ = true;
     marker_ = MakeMarker(last_odom_.pose.pose.position,
                          last_odom_.pose.pose.orientation);
     DropOff();
-    is_picked_up_ = false;
   }
+}
+
+bool MarkerManager::CanPickUp() const {
+  return not IsDroppedOff() && (not IsPickedUp() && InRange());
 }
 
 double MarkerManager::Distance(double dx, double dy) {
@@ -116,3 +122,5 @@ bool MarkerManager::Equal(
   auto dy = left.pose.pose.position.y - right.pose.pose.position.y;
   return Distance(dx, dy) < EPSILON;
 }
+
+bool MarkerManager::IsDroppedOff() const { return is_dropped_off_; }
