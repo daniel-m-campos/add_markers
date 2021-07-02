@@ -115,14 +115,15 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
+        include
+        ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/add_markers.cpp
-# )
+add_library(
+        ${PROJECT_NAME}
+        src/marker_manager.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -132,7 +133,10 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
- add_executable(${PROJECT_NAME}_node src/add_markers_node.cpp)
+add_executable(
+        ${PROJECT_NAME}_node
+        src/add_markers_node.cpp
+)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -145,9 +149,15 @@ include_directories(
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
+target_link_libraries(
+        ${PROJECT_NAME}
+        PUBLIC
         ${catkin_LIBRARIES}
-        )
+)
+target_link_libraries(
+        ${PROJECT_NAME}_node
+        ${PROJECT_NAME}
+)
 
 #############
 ## Install ##
@@ -196,10 +206,11 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_add_markers.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+if (CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
+    catkin_add_gtest(${PROJECT_NAME}-test test/test_marker_manager.cpp)
+    target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+endif ()
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
