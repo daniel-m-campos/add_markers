@@ -95,10 +95,14 @@ void MarkerManager::Update() {
   }
 }
 
+double MarkerManager::Distance(double dx, double dy) {
+  return sqrt(pow(dx, 2) + pow(dy, 2));
+}
+
 bool MarkerManager::InRange() const {
   auto dx = last_odom_.pose.pose.position.x - marker_.pose.position.x;
   auto dy = last_odom_.pose.pose.position.y - marker_.pose.position.y;
-  return sqrt(pow(dx, 2) + pow(dy, 2)) < 0.1;
+  return Distance(dx, dy) < EPSILON;
 }
 
 bool MarkerManager::IsNotMoving() const {
@@ -108,6 +112,7 @@ bool MarkerManager::IsNotMoving() const {
 bool MarkerManager::Equal(
     const geometry_msgs::PoseWithCovarianceStamped& left,
     const geometry_msgs::PoseWithCovarianceStamped& right) {
-  return (left.pose.pose.position.x == right.pose.pose.position.x) &&
-         (left.pose.pose.position.y == right.pose.pose.position.y);
+  auto dx = left.pose.pose.position.x - right.pose.pose.position.x;
+  auto dy = left.pose.pose.position.y - right.pose.pose.position.y;
+  return Distance(dx, dy) < EPSILON;
 }

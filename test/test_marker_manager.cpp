@@ -22,7 +22,8 @@ TEST_F(MarkerManagerFixture, testConstructor) {
 TEST_F(MarkerManagerFixture, testOdomCallBackTriggered) {
   MarkerManager manager{node_handle, position, orientation, 0.1};
   ros::Publisher publisher =
-      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose", 1);
+      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>(
+          "/amcl_pose", 1);
   geometry_msgs::PoseWithCovarianceStamped expected;
   expected.header.stamp = ros::Time::now();
   publisher.publish(expected);
@@ -37,7 +38,8 @@ TEST_F(MarkerManagerFixture, testPickedUp) {
   position.y = -1.2;
   MarkerManager manager{node_handle, position, orientation, 0.1};
   ros::Publisher publisher =
-      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose", 1);
+      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>(
+          "/amcl_pose", 1);
 
   geometry_msgs::PoseWithCovarianceStamped msg;
   msg.pose.pose.position = position;
@@ -54,7 +56,8 @@ TEST_F(MarkerManagerFixture, testDroppedOff) {
   MarkerManager manager{node_handle, position, orientation, 0.1,
                         not_moving_threshold};
   ros::Publisher publisher =
-      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>("/amcl_pose", 1);
+      node_handle.advertise<geometry_msgs::PoseWithCovarianceStamped>(
+          "/amcl_pose", 1);
 
   geometry_msgs::PoseWithCovarianceStamped msg;
   msg.header.stamp = ros::Time::now();

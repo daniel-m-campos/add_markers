@@ -24,6 +24,7 @@ class MarkerManager {
   unsigned int not_moving_threshold_;
   bool is_picked_up_;
   double wait_seconds_;
+  static constexpr double EPSILON = 0.25;
 
  private:
   void OdmCallback(const geometry_msgs::PoseWithCovarianceStamped& odom);
@@ -36,6 +37,7 @@ class MarkerManager {
   bool IsNotMoving() const;
   static bool Equal(const geometry_msgs::PoseWithCovarianceStamped& left,
                     const geometry_msgs::PoseWithCovarianceStamped& right);
+  static double Distance(double dx, double dy);
 };
 
 #endif  // MARKER_MANAGER_H_
