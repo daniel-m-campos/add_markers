@@ -120,7 +120,9 @@ bool MarkerManager::Equal(
     const geometry_msgs::PoseWithCovarianceStamped& right) {
   auto dx = left.pose.pose.position.x - right.pose.pose.position.x;
   auto dy = left.pose.pose.position.y - right.pose.pose.position.y;
-  return Distance(dx, dy) < EPSILON;
+  auto dw = left.pose.pose.orientation.w - right.pose.pose.orientation.w;
+  auto dz = left.pose.pose.orientation.z - right.pose.pose.orientation.z;
+  return (Distance(dx, dy) < EPSILON) && (Distance(dw, dz) < EPSILON);
 }
 
 bool MarkerManager::IsDroppedOff() const { return is_dropped_off_; }
