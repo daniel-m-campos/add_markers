@@ -7,6 +7,11 @@ class MarkerManagerFixture : public testing::Test {
   ros::NodeHandle node_handle;
   geometry_msgs::Quaternion orientation;
   geometry_msgs::Point position;
+  ros::Subscriber marker_sub{node_handle.subscribe(
+      "visualization_marker", 1, &MarkerManagerFixture::MarkerCallBack)};
+  static void MarkerCallBack(const visualization_msgs::Marker& msg) {
+    ROS_INFO_STREAM("Test subscribed to /visualization_marker");
+  }
 };
 
 TEST_F(MarkerManagerFixture, testConstructor) {

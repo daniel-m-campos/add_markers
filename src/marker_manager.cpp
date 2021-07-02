@@ -17,9 +17,13 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
       not_moving_threshold_{not_moving_threshold},
       is_picked_up_{false},
       wait_seconds_{wait_seconds} {
-  DropOff();
   ROS_INFO_STREAM("MarkerManager constructed @ "
                   << this << ", on thread : " << std::this_thread::get_id());
+  while (marker_pub_.getNumSubscribers() < 1 && ros::ok()) {
+    ROS_WARN_ONCE("Please create a subscriber to the marker");
+    sleep(1);
+  }
+  DropOff();
 }
 
 const nav_msgs::Odometry& MarkerManager::GetLastMessage() { return last_odom_; }
