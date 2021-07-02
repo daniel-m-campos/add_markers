@@ -26,11 +26,13 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
   DropOff();
 }
 
-const geometry_msgs::PoseWithCovariance& MarkerManager::GetLastMessage() {
+const geometry_msgs::PoseWithCovarianceStamped&
+MarkerManager::GetLastMessage() {
   return last_odom_;
 }
 
-void MarkerManager::OdmCallback(const geometry_msgs::PoseWithCovariance& odom) {
+void MarkerManager::OdmCallback(
+    const geometry_msgs::PoseWithCovarianceStamped& odom) {
   ROS_INFO_STREAM_ONCE("Received first odom message @ " << ros::Time::now());
   if (Equal(last_odom_, odom)) {
     ++not_moving_count_;
@@ -83,15 +85,16 @@ void MarkerManager::Update() {
     Hide();
   } else if (IsNotMoving()) {
     ROS_INFO("Marker has been dropped off");
-    marker_ = MakeMarker(last_odom_.pose.position, last_odom_.pose.orientation);
+    marker_ = MakeMarker(last_odom_.pose.pose.position,
+                         last_odom_.pose.pose.orientation);
     DropOff();
     is_picked_up_ = false;
   }
 }
 
 bool MarkerManager::InRange() const {
-  auto dx = last_odom_.pose.position.x - marker_.pose.position.x;
-  auto dy = last_odom_.pose.position.y - marker_.pose.position.y;
+  auto dx = last_odom_.pose.pose.position.x - marker_.pose.position.x;
+  auto dy = last_odom_.pose.pose.position.y - marker_.pose.position.y;
   return sqrt(pow(dx, 2) + pow(dy, 2)) < 0.1;
 }
 
@@ -99,8 +102,9 @@ bool MarkerManager::IsNotMoving() const {
   return not_moving_count_ >= not_moving_threshold_;
 }
 
-bool MarkerManager::Equal(const geometry_msgs::PoseWithCovariance& left,
-                          const geometry_msgs::PoseWithCovariance& right) {
-  return (left.pose.position.x == right.pose.position.x) &&
-         (left.pose.position.y == right.pose.position.y);
+bool MarkerManager::Equal(
+    const geometry_msgs::PoseWithCovarianceStamped& left,
+    const geometry_msgs::PoseWithCovarianceStamped& right) {
+  return (left.pose.pose.position.x == right.pose.pose.position.x) &&
+         (left.pose.pose.position.y == right.pose.pose.position.y);
 }
