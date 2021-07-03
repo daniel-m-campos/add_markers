@@ -36,7 +36,7 @@ class MarkerManager {
   void Hide();
   void DropOff();
   bool InRange() const;
-  bool IsNotMoving() const;
+  bool CanDropOff() const;
   static bool Equal(const geometry_msgs::PoseWithCovarianceStamped& left,
                     const geometry_msgs::PoseWithCovarianceStamped& right);
   static double Distance(double dx, double dy);

@@ -87,7 +87,7 @@ void MarkerManager::Update() {
     ROS_INFO_STREAM("Marker has been picked up @ " << this);
     is_picked_up_ = true;
     Hide();
-  } else if (IsNotMoving()) {
+  } else if (CanDropOff()) {
     ROS_INFO("Marker has been dropped off");
     is_picked_up_ = false;
     is_dropped_off_ = true;
@@ -111,8 +111,8 @@ bool MarkerManager::InRange() const {
   return Distance(dx, dy) < EPSILON;
 }
 
-bool MarkerManager::IsNotMoving() const {
-  return not_moving_count_ >= not_moving_threshold_;
+bool MarkerManager::CanDropOff() const {
+  return is_picked_up_ && (not_moving_count_ >= not_moving_threshold_);
 }
 
 bool MarkerManager::Equal(
