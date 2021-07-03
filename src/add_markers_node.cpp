@@ -11,6 +11,6 @@ int main(int argc, char **argv) {
   position.x = -3.0;
   position.y = -1.2;
   orientation.w = 1.0;
-  MarkerManager manager{node_handle, position, orientation};
+  MarkerManager manager{node_handle, position, orientation, 5, 50};
   ros::spin();
 }
