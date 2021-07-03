@@ -5,9 +5,6 @@
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "add_markers");
-  ROS_WARN("Setting AMCL update_min_{d,a} parameters to zero");
-  ros::param::set("/amcl/update_min_d", 0);
-  ros::param::set("/amcl/update_min_a", 0);
   ros::NodeHandle node_handle;
   geometry_msgs::Point position;
   geometry_msgs::Quaternion orientation;
