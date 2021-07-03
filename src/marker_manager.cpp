@@ -25,9 +25,6 @@ MarkerManager::MarkerManager(ros::NodeHandle& node_handle,
     sleep(1);
   }
   DropOff();
-  ROS_WARN("Setting AMCL update_min_{d,a} parameters to zero");
-  node_handle.setParam("/amcl/update_min_d", 0);
-  node_handle.setParam("/amcl/update_min_a", 0);
 }
 
 const geometry_msgs::PoseWithCovarianceStamped&
