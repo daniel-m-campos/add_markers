@@ -5,7 +5,7 @@
 
 unsigned int GetNotMovingThreshold(const ros::NodeHandle &node_handle) {
   int i = 100;
-  if (node_handle.getParam("~not_moving_threshold", i))
+  if (node_handle.getParam("not_moving_threshold", i))
     ROS_INFO_STREAM("Parameter not_moving_threshold set to" << i);
   unsigned int not_moving_threshold = i;
   return not_moving_threshold;
